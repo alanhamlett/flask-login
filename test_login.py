@@ -1785,8 +1785,8 @@ class CustomTestClientTestCase(unittest.TestCase):
             self.assertEqual(u'True', is_fresh.data.decode('utf-8'))
 
     def test_fresh_login_arg_to_test_client(self):
-        with self.app.test_client(user=creeper, fresh_login=False) as c:
+        with self.app.test_client(user=notch, fresh_login=False) as c:
             username = c.get('/username')
-            self.assertEqual(u'Creeper', username.data.decode('utf-8'))
+            self.assertEqual(u'Notch', username.data.decode('utf-8'))
             is_fresh = c.get('/is-fresh')
             self.assertEqual(u'False', is_fresh.data.decode('utf-8'))
