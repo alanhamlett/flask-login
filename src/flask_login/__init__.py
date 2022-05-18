@@ -1,5 +1,4 @@
 from .__about__ import __version__
-from .config import AUTH_HEADER_NAME
 from .config import COOKIE_DURATION
 from .config import COOKIE_HTTPONLY
 from .config import COOKIE_NAME
@@ -15,7 +14,6 @@ from .mixins import UserMixin
 from .signals import session_protected
 from .signals import user_accessed
 from .signals import user_loaded_from_cookie
-from .signals import user_loaded_from_header
 from .signals import user_loaded_from_request
 from .signals import user_logged_in
 from .signals import user_logged_out
@@ -39,7 +37,6 @@ from .utils import set_login_view
 
 __all__ = [
     "__version__",
-    "AUTH_HEADER_NAME",
     "COOKIE_DURATION",
     "COOKIE_HTTPONLY",
     "COOKIE_NAME",
@@ -55,7 +52,6 @@ __all__ = [
     "session_protected",
     "user_accessed",
     "user_loaded_from_cookie",
-    "user_loaded_from_header",
     "user_loaded_from_request",
     "user_logged_in",
     "user_logged_out",

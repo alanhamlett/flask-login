@@ -14,10 +14,6 @@ user_logged_out = _signals.signal("logged-out")
 #: is the sender), it is passed `user`, which is the user being reloaded.
 user_loaded_from_cookie = _signals.signal("loaded-from-cookie")
 
-#: Sent when the user is loaded from the header. In addition to the app (which
-#: is the #: sender), it is passed `user`, which is the user being reloaded.
-user_loaded_from_header = _signals.signal("loaded-from-header")
-
 #: Sent when the user is loaded from the request. In addition to the app (which
 #: is the #: sender), it is passed `user`, which is the user being reloaded.
 user_loaded_from_request = _signals.signal("loaded-from-request")

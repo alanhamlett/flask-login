@@ -1,4 +1,3 @@
-import warnings
 from datetime import datetime
 from datetime import timedelta
 
@@ -11,7 +10,6 @@ from flask import redirect
 from flask import request
 from flask import session
 
-from .config import AUTH_HEADER_NAME
 from .config import COOKIE_DURATION
 from .config import COOKIE_HTTPONLY
 from .config import COOKIE_NAME
@@ -28,7 +26,6 @@ from .mixins import AnonymousUserMixin
 from .signals import session_protected
 from .signals import user_accessed
 from .signals import user_loaded_from_cookie
-from .signals import user_loaded_from_header
 from .signals import user_loaded_from_request
 from .signals import user_needs_refresh
 from .signals import user_unauthorized
@@ -99,24 +96,12 @@ class LoginManager:
 
         self._user_callback = None
 
-        self._header_callback = None
-
         self._request_callback = None
 
         self._session_identifier_generator = _create_identifier
 
         if app is not None:
             self.init_app(app, add_context_processor)
-
-    def setup_app(self, app, add_context_processor=True):  # pragma: no cover
-        """
-        This method has been deprecated. Please use
-        :meth:`LoginManager.init_app` instead.
-        """
-        warnings.warn(
-            "Warning setup_app is deprecated. Please use init_app.", DeprecationWarning
-        )
-        self.init_app(app, add_context_processor)
 
     def init_app(self, app, add_context_processor=True):
         """
@@ -306,25 +291,6 @@ class LoginManager:
 
         return redirect(redirect_url)
 
-    def header_loader(self, callback):
-        """
-        This function has been deprecated. Please use
-        :meth:`LoginManager.request_loader` instead.
-
-        This sets the callback for loading a user from a header value.
-        The function you set should take an authentication token and
-        return a user object, or `None` if the user does not exist.
-
-        :param callback: The callback for retrieving a user object.
-        :type callback: callable
-        """
-        print(
-            "LoginManager.header_loader is deprecated. Use"
-            " LoginManager.request_loader instead."
-        )
-        self._header_callback = callback
-        return callback
-
     def _update_request_context_with_user(self, user=None):
         """Store the given user as ctx.user."""
 
@@ -358,7 +324,6 @@ class LoginManager:
         if user is None:
             config = current_app.config
             cookie_name = config.get("REMEMBER_COOKIE_NAME", COOKIE_NAME)
-            header_name = config.get("AUTH_HEADER_NAME", AUTH_HEADER_NAME)
             has_cookie = (
                 cookie_name in request.cookies and session.get("_remember") != "clear"
             )
@@ -367,9 +332,6 @@ class LoginManager:
                 user = self._load_user_from_remember_cookie(cookie)
             elif self._request_callback:
                 user = self._load_user_from_request(request)
-            elif header_name in request.headers:
-                header = request.headers[header_name]
-                user = self._load_user_from_header(header)
 
         return self._update_request_context_with_user(user)
 
@@ -412,15 +374,6 @@ class LoginManager:
             if user is not None:
                 app = current_app._get_current_object()
                 user_loaded_from_cookie.send(app, user=user)
-                return user
-        return None
-
-    def _load_user_from_header(self, header):
-        if self._header_callback:
-            user = self._header_callback(header)
-            if user is not None:
-                app = current_app._get_current_object()
-                user_loaded_from_header.send(app, user=user)
                 return user
         return None
 
